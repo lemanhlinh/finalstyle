@@ -1,5 +1,9 @@
 <?php
-
+# @Author: Manh Linh
+# @Date:   2023-01-01T17:33:09+07:00
+# @Email:  lemanhlinh209@gmail.com
+# @Last modified by:   Manh Linh
+# @Last modified time: 2023-01-01T16:49:02+07:00
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,13 +17,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-Route::get('/home', 'HomeController@index')->name('home');
-
-Route::get('/admin', function () {
-    return redirect()->route('admin.login');
+//Route::get('/', function () {
+//    return view('welcome');
+//});
+Route::group(['namespace' => 'Web'], function (){
+    Route::get('/', 'HomeController@index')->name('home');
 });
 
 Route::any('/ckfinder/connector', '\CKSource\CKFinderBridge\Controller\CKFinderController@requestAction')
@@ -30,6 +32,10 @@ Route::any('/ckfinder/browser', '\CKSource\CKFinderBridge\Controller\CKFinderCon
 
 //Route::any('/ckfinder/examples/{example?}', '\CKSource\CKFinderBridge\Controller\CKFinderController@examplesAction')
 //    ->name('ckfinder_examples');
+
+Route::get('/admin', function () {
+    return redirect()->route('admin.login');
+});
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin'], function () {
     Auth::routes();
@@ -73,6 +79,16 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin'], fu
         Route::get('/edit/{id}', 'ArticleCategoryController@edit')->name('edit')->middleware('permission:edit_article');
         Route::post('/update/{id}', 'ArticleCategoryController@update')->name('update')->middleware('permission:edit_article');
         Route::post('/destroy/{id}', 'ArticleCategoryController@destroy')->name('destroy')->middleware('permission:delete_article');
+        Route::post('update-tree', 'ArticleCategoryController@updateTree')->name('updateTree')->middleware('permission:edit_article');
+    });
+
+    Route::group(['prefix' => 'setting', 'as' => 'setting.', 'middleware' => ['permission:view_article']], function () {
+        Route::get('', 'SettingController@index')->name('index');
+        Route::get('/create', 'SettingController@create')->name('create')->middleware('permission:create_article');
+        Route::post('/store', 'SettingController@store')->name('store')->middleware('permission:create_article');
+        Route::get('/edit/{id}', 'SettingController@edit')->name('edit')->middleware('permission:edit_article');
+        Route::post('/update/{id}', 'SettingController@update')->name('update')->middleware('permission:edit_article');
+        Route::post('/destroy/{id}', 'SettingController@destroy')->name('destroy')->middleware('permission:delete_article');
     });
 
 });

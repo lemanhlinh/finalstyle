@@ -14,6 +14,7 @@ use App\Http\Requests\Article\CreateArticleCategory;
 class ArticleCategoryController extends Controller
 {
     protected $articleCategoryRepository;
+
     public function __construct(ArticleCategoryInterface $articleCategoryRepository)
     {
         $this->middleware('auth');
@@ -28,7 +29,8 @@ class ArticleCategoryController extends Controller
      */
     public function index(ArticleCategoryDataTable $dataTable)
     {
-        return $dataTable->render('admin.article-category.index');
+        $categories = $this->articleCategoryRepository->getAll()->toTree();
+        return $dataTable->render('admin.article-category.index',compact('categories'));
     }
 
     /**
@@ -38,7 +40,12 @@ class ArticleCategoryController extends Controller
      */
     public function create()
     {
-        return view('admin.article-category.create');
+        $categoriesTree = $this->articleCategoryRepository->getWithDepth();
+        $categories = array();
+        foreach ($categoriesTree as $item) {
+            $categories[$item->id] = str_repeat('-', $item->depth) . $item->name;
+        }
+        return view('admin.article-category.create',compact('categories'));
     }
 
     /**
@@ -52,9 +59,14 @@ class ArticleCategoryController extends Controller
         DB::beginTransaction();
         try {
             $data = $req->validated();
-            $this->articleCategoryRepository->store($data);
+            $this->articleCategoryRepository->store([
+                'name' => $data['name'],
+                'slug' => $req->input('slug')?\Str::slug($req->input('slug'), '-'):\Str::slug($data['name'], '-'),
+                'parent_id' => $req->input('parent_id'),
+                'image' =>  $data['image']
+            ]);
             DB::commit();
-            Session::flash('success', trans('message.create_question_success'));
+            Session::flash('success', trans('message.create_article_category_success'));
             return redirect()->back();
         } catch (\Exception $ex) {
             DB::rollBack();
@@ -64,7 +76,7 @@ class ArticleCategoryController extends Controller
                 'method' => __METHOD__
             ]);
 
-            Session::flash('danger', trans('message.create_question_error'));
+            Session::flash('danger', trans('message.create_article_category_error'));
             return redirect()->back();
         }
     }
@@ -89,20 +101,46 @@ class ArticleCategoryController extends Controller
     public function edit($id)
     {
         $article_category = $this->articleCategoryRepository->getOneById($id);
-
-        return view('admin.article-category.update', compact('article_category'));
+        $categoriesTree = $this->articleCategoryRepository->getWithDepth();
+        $categories = array();
+        foreach ($categoriesTree as $item) {
+            $categories[$item->id] = str_repeat('-', $item->depth) . $item->name;
+        }
+        return view('admin.article-category.update', compact('article_category','categories'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param int $id
+     * @param UpdateArticleCategory $req
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update($id, UpdateArticleCategory $req)
     {
-        //
+        try {
+            $data = $req->validated();
+            $category = $this->articleCategoryRepository->getOneById($id);
+
+            $category->name = $data['name'];
+            $category->slug = $data['slug'];
+            $category->parent_id = $req->input('parent_id');
+            if (\request()->hasFile('image')) {
+                $category->image = $this->articleCategoryRepository->saveFileUpload($data['image'],'images');
+            }
+
+            $category->save();
+            Session::flash('success', trans('message.update_article_category_success'));
+            return redirect()->route('admin.article-category.edit', $id);
+        } catch (\Exception $exception) {
+            \Log::info([
+                'message' => $exception->getMessage(),
+                'line' => __LINE__,
+                'method' => __METHOD__
+            ]);
+            Session::flash('danger', trans('message.update_article_category_error'));
+            return back();
+        }
     }
 
     /**
@@ -113,6 +151,26 @@ class ArticleCategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $this->articleCategoryRepository->delete($id);
+
+        return [
+            'status' => true,
+            'message' => trans('message.delete_article_category_success')
+        ];
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param int $id
+     * @param updateTree $request
+     * @return \Illuminate\Http\Response
+     */
+    public function updateTree(Request $request)
+    {
+        $data = $request->data;
+        $root = $this->articleCategoryRepository->getAll()->find(1);
+        $this->articleCategoryRepository->updateTreeRebuild($root, $data);
+        return response()->json($data);
     }
 }

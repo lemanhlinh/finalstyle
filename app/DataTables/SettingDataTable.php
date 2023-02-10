@@ -2,15 +2,14 @@
 
 namespace App\DataTables;
 
-use App\Models\ArticleCategory;
-use Carbon\Carbon;
+use App\Models\Setting;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
-class ArticleCategoryDataTable extends DataTable
+class SettingDataTable extends DataTable
 {
     /**
      * Build DataTable class.
@@ -22,27 +21,16 @@ class ArticleCategoryDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
-            ->editColumn('created_at', function ($q) {
-                return Carbon::parse($q->created_at)->format('H:i:s Y/m/d');
-            })
-            ->editColumn('updated_at', function ($q) {
-                return Carbon::parse($q->updated_at)->format('H:i:s Y/m/d');
-            })
-            ->addColumn('action', function ($q){
-                $urlEdit = route('admin.article-category.edit', $q->id);
-                $urlDelete = route('admin.article-category.destroy', $q->id);
-                $lowerModelName = strtolower(class_basename(new ArticleCategory()));
-                return view('admin.components.buttons.edit', compact('urlEdit'))->render() . view('admin.components.buttons.delete', compact('urlDelete', 'lowerModelName'))->render();
-            });
+            ->addColumn('action', 'setting.action');
     }
 
     /**
      * Get query source of dataTable.
      *
-     * @param \App\Models\ArticleCategory $model
+     * @param \App\Models\SettingDataTable $model
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function query(ArticleCategory $model)
+    public function query(Setting $model)
     {
         return $model->newQuery();
     }
@@ -55,11 +43,11 @@ class ArticleCategoryDataTable extends DataTable
     public function html()
     {
         return $this->builder()
-                    ->setTableId('articlecategory-table')
+                    ->setTableId('setting-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
                     ->dom('Bfrtip')
-                    ->orderBy(0)
+                    ->orderBy(1)
                     ->buttons(
                         Button::make('create'),
                         Button::make('export'),
@@ -79,16 +67,15 @@ class ArticleCategoryDataTable extends DataTable
         return [
             Column::make('id'),
             Column::make('name'),
-            Column::make('image')->title(trans('form.article_category.image'))->render([
-                'renderImage(data)'
-            ]),
+            Column::make('value'),
+            Column::make('description'),
             Column::make('created_at'),
             Column::make('updated_at'),
             Column::computed('action')
-                ->exportable(false)
-                ->printable(false)
-                ->width(60)
-                ->addClass('text-center'),
+                  ->exportable(false)
+                  ->printable(false)
+                  ->width(60)
+                  ->addClass('text-center'),
         ];
     }
 
@@ -99,6 +86,6 @@ class ArticleCategoryDataTable extends DataTable
      */
     protected function filename()
     {
-        return 'ArticleCategory_' . date('YmdHis');
+        return 'Setting_' . date('YmdHis');
     }
 }

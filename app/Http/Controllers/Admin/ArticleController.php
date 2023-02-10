@@ -5,16 +5,24 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\DataTables\ArticleDataTable;
+use App\DataTables\Scopes\ArticleDataTableScope;
 use App\Repositories\Contracts\ArticleCategoryInterface;
+use App\Repositories\Contracts\ArticleInterface;
+use App\Http\Requests\Article\CreateArticle;
+use App\Http\Requests\Article\UpdateArticle;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class ArticleController extends Controller
 {
     protected $articleCategoryRepository;
+    protected $articleRepository;
 
-    public function __construct(ArticleCategoryInterface $articleCategoryRepository)
+    public function __construct(ArticleCategoryInterface $articleCategoryRepository, ArticleInterface $articleRepository)
     {
         $this->middleware('auth');
         $this->articleCategoryRepository = $articleCategoryRepository;
+        $this->articleRepository = $articleRepository;
     }
 
     /**
@@ -25,7 +33,13 @@ class ArticleController extends Controller
      */
     public function index(ArticleDataTable $dataTable)
     {
-        return $dataTable->render('admin.article.index');
+        $data = request()->all();
+        $categoriesTree = $this->articleCategoryRepository->getWithDepth();
+        $categories = array();
+        foreach ($categoriesTree as $item) {
+            $categories[$item->id] = str_repeat('-', $item->depth) . $item->name;
+        }
+        return $dataTable->addScope(new ArticleDataTableScope())->render('admin.article.index', compact('data','categories'));
     }
 
     /**
@@ -35,19 +49,47 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        $categories = $this->articleCategoryRepository->getAll();
+        $categoriesTree = $this->articleCategoryRepository->getWithDepth();
+        $categories = array();
+        foreach ($categoriesTree as $item) {
+            $categories[$item->id] = str_repeat('-', $item->depth) . $item->name;
+        }
         return view('admin.article.create',compact('categories'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param CreateArticle $req
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateArticle $req)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $data = $req->validated();
+            $this->articleRepository->store([
+                'title' => $data['title'],
+                'slug' => $req->input('slug')?\Str::slug($req->input('slug'), '-'):\Str::slug($data['title'], '-'),
+                'category_id' => $req->input('category_id'),
+                'content' => $req->input('content'),
+                'date' => $req->input('date'),
+                'image' =>  $data['image']
+            ]);
+            DB::commit();
+            Session::flash('success', trans('message.create_article_success'));
+            return redirect()->back();
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            \Log::info([
+                'message' => $ex->getMessage(),
+                'line' => __LINE__,
+                'method' => __METHOD__
+            ]);
+
+            Session::flash('danger', trans('message.create_article_error'));
+            return redirect()->back();
+        }
     }
 
     /**
@@ -69,19 +111,49 @@ class ArticleController extends Controller
      */
     public function edit($id)
     {
-        //
+        $article = $this->articleRepository->getOneById($id);
+        $categoriesTree = $this->articleCategoryRepository->getWithDepth();
+        $categories = array();
+        foreach ($categoriesTree as $item) {
+            $categories[$item->id] = str_repeat('-', $item->depth) . $item->name;
+        }
+        return view('admin.article.update', compact('article','categories'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  UpdateArticle  $req
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update($id, UpdateArticle $req)
     {
-        //
+        try {
+            $data = $req->validated();
+            $article = $this->articleRepository->getOneById($id);
+
+            $article->title = $data['title'];
+            $article->slug = $data['slug'];
+            $article->category_id = $req->input('category_id');
+            $article->content = $req->input('content');
+            $article->date = $req->input('date');
+            if (\request()->hasFile('image')) {
+                $article->image = $this->articleCategoryRepository->saveFileUpload($data['image'],'images');
+            }
+
+            $article->save();
+            Session::flash('success', trans('message.update_article_success'));
+            return redirect()->route('admin.article.edit', $id);
+        } catch (\Exception $exception) {
+            \Log::info([
+                'message' => $exception->getMessage(),
+                'line' => __LINE__,
+                'method' => __METHOD__
+            ]);
+            Session::flash('danger', trans('message.update_article_error'));
+            return back();
+        }
     }
 
     /**

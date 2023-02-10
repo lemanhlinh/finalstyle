@@ -13,7 +13,7 @@ class UpdateArticleCategory extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,9 @@ class UpdateArticleCategory extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => 'required',
+            'slug' => 'required',
+            'image' => 'required_if:type,file|image|mimes:jpg,jpeg,png',
         ];
     }
 }

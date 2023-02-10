@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 
-@section('title_file', trans('form.article-category.create'))
+@section('title_file', trans('form.article_category.create'))
 
 @section('content')
     <div class="card card-primary card-body">

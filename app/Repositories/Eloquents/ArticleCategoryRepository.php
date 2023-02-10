@@ -28,6 +28,7 @@ class ArticleCategoryRepository extends BaseRepository implements ArticleCategor
         return $this->create([
             'name' =>  $data['name'],
             'slug' =>  $data['slug'],
+            'parent_id' =>  $data['parent_id'] ?? 0,
             'image' =>  $data['image'] ?? null
         ]);
     }
@@ -44,5 +45,15 @@ class ArticleCategoryRepository extends BaseRepository implements ArticleCategor
         $file->storeAs('public/article/category/' . $type . '/', $fileName);
 
         return '/storage/article/category/' . $type . '/' . $fileName;
+    }
+
+    /**
+     * @param $file
+     * @param $type
+     * @return string
+     */
+    public function updateTreeRebuild($root, $data)
+    {
+        return $this->model->rebuildSubtree($root, $data);
     }
 }

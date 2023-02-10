@@ -86,4 +86,12 @@ abstract class BaseRepository implements BaseInterface
     {
         return $this->model->select($columns)->latest()->paginate($limit ?? config('data.limit', 20));
     }
+
+    /**
+     * @return Collection
+     */
+    public function getWithDepth() : Collection
+    {
+        return $this->model->withDepth()->defaultOrder()->get();
+    }
 }
