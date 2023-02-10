@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\Article;
+use Carbon\Carbon;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Editor\Editor;
@@ -21,7 +22,15 @@ class ArticleDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
-            ->addColumn('action', 'article.action')
+            ->editColumn('created_at', function ($q) {
+                return Carbon::parse($q->created_at)->format('H:i:s Y/m/d');
+            })
+            ->editColumn('updated_at', function ($q) {
+                return Carbon::parse($q->updated_at)->format('H:i:s Y/m/d');
+            })
+            ->editColumn('category_id', function ($q) {
+                return optional($q->category)->name;
+            })
             ->addColumn('action', function ($q) {
                 $urlEdit = route('admin.article.edit', $q->id);
                 $urlDelete = route('admin.article.destroy', $q->id);
@@ -38,7 +47,7 @@ class ArticleDataTable extends DataTable
      */
     public function query(Article $model)
     {
-        return $model->newQuery();
+        return $model->newQuery()->with('category');
     }
 
     /**
@@ -53,7 +62,7 @@ class ArticleDataTable extends DataTable
                     ->columns($this->getColumns())
                     ->minifiedAjax()
                     ->dom('Bfrtip')
-                    ->orderBy(1)
+                    ->orderBy(0)
                     ->buttons(
                         Button::make('create'),
                         Button::make('export'),
@@ -73,8 +82,12 @@ class ArticleDataTable extends DataTable
         return [
             Column::make('id'),
             Column::make('title'),
-            Column::make('created_at'),
-            Column::make('updated_at'),
+            Column::make('image')->title(trans('form.article_category.image'))->render([
+                'renderImage(data)'
+            ]),
+            Column::make('category_id')->title(trans('form.article_category.manage')),
+            Column::make('created_at')->title(trans('form.created_at')),
+            Column::make('updated_at')->title(trans('form.updated_at')),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

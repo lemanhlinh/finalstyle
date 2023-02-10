@@ -4,7 +4,7 @@ namespace App\Http\Requests\Article;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateArticleCategory extends FormRequest
+class UpdateArticle extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,12 @@ class CreateArticleCategory extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'image' => 'required|mimes:jpg,jpeg,png',
+            'title' => 'required',
+            'category_id' => 'required',
+            'slug' => 'required',
+            'content' => 'required',
+            'date' => 'required',
+            'image' => 'required_if:type,file|image|mimes:jpg,jpeg,png',
         ];
     }
 }

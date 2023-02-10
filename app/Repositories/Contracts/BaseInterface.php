@@ -54,4 +54,9 @@ interface BaseInterface
      * @return mixed
      */
     public function paginate(int $limit, array $column = ['*']);
+
+    /**
+     * @return Collection
+     */
+    public function getWithDepth(): Collection;
 }
