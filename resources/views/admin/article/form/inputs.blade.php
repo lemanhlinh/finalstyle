@@ -109,22 +109,37 @@
 @section('script')
     <script src="{{ asset('ckeditor5/ckeditor.js') }}"></script>
     <script>
-        ClassicEditor
+        const watchdog = new CKSource.EditorWatchdog();
+        window.watchdog = watchdog;
+        watchdog.setCreator( ( element, config ) => {
+            return CKSource.Editor
+                .create( element, config )
+                .then( editor => {
+                    return editor;
+                } )
+        } );
+
+        watchdog.setDestructor( editor => {
+            return editor.destroy();
+        } );
+
+        watchdog.on( 'error', handleError );
+
+        watchdog
             .create( document.querySelector( '#content' ), {
-                ckfinder: {
+                ckFinder: {
                     uploadUrl: '{{route('ckfinder_connector')}}?command=QuickUpload&type=Files&responseType=json',
                 },
-                toolbar: [ 'ckfinder', 'imageUpload', '|', 'heading', '|', 'bold', 'italic', '|', 'undo', 'redo' ]
+                removePlugins: ["MediaEmbedToolbar","Markdown"]
             } )
-            .then( editor => {
-                window.editor = editor;
-            } )
-            .catch( error => {
-                console.error( 'Oops, something went wrong!' );
-                console.error( 'Please, report the following error on https://github.com/ckeditor/ckeditor5/issues with the build id and the error stack trace:' );
-                console.warn( 'Build id: mrtoviz9w3mq-smtjaa3191gp' );
-                console.error( error );
-            } );
+            .catch( handleError );
+
+        function handleError( error ) {
+            console.error( 'Oops, something went wrong!' );
+            console.error( 'Please, report the following error on https://github.com/ckeditor/ckeditor5/issues with the build id and the error stack trace:' );
+            console.warn( 'Build id: ryu56eng8wy8-nohdljl880ze' );
+            console.error( error );
+        }
     </script>
     @include('ckfinder::setup')
 @endsection
