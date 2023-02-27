@@ -101,56 +101,6 @@
                         </a>
                     </li>
                 @endcan
-                @can('view_manner')
-                    <li class="nav-item">
-                        <a href="{{ route('admin.trainee-manners.index') }}" class="nav-link @if (request()->is('admin/trainee-manner*')) active @endif">
-                            <i class="nav-icon fas fa-gavel"></i>
-                            <p>
-                                @lang('form.trainee_manner.')
-                            </p>
-                        </a>
-                    </li>
-                @endcan
-                @can('view_lesson_scores')
-                    <li class="nav-item">
-                        <a href="{{ route('admin.lesson-scores.index') }}" class="nav-link @if (request()->is('admin/lesson-score*')) active @endif">
-                            <i class="nav-icon fa fa-fax"></i>
-                            <p>
-                                @lang('form.lesson_scores.')
-                            </p>
-                        </a>
-                    </li>
-                @endcan
-                @can('view_order')
-                    <li class="nav-item">
-                        <a href="{{ route('admin.orders.index') }}" class="nav-link @if (request()->is('admin/order*')) active @endif">
-                            <i class="nav-icon fas fa-shopping-cart"></i>
-                            <p>
-                                @lang('form.order.manage')
-                            </p>
-                        </a>
-                    </li>
-                @endcan
-                @can('view_company')
-                    <li class="nav-item">
-                        <a href="{{ route('admin.companies.index') }}" class="nav-link @if (request()->is('admin/companies*')) active @endif">
-                            <i class="nav-icon far fa-building"></i>
-                            <p>
-                                @lang('form.companies.manage')
-                            </p>
-                        </a>
-                    </li>
-                @endcan
-                @can('view_work')
-                    <li class="nav-item">
-                        <a href="{{ route('admin.works.index') }}" class="nav-link @if (request()->is('admin/work*')) active @endif">
-                            <i class="nav-icon fas fa-briefcase"></i>
-                            <p>
-                                @lang('form.manage_work')
-                            </p>
-                        </a>
-                    </li>
-                @endcan
 
             </ul>
         </nav>
