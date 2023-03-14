@@ -128,9 +128,13 @@
         watchdog
             .create( document.querySelector( '#content' ), {
                 ckFinder: {
-                    uploadUrl: '{{route('ckfinder_connector')}}?command=QuickUpload&type=Files&responseType=json',
+                    uploadUrl: '{{route('ckfinder_connector')}}?command=QuickUpload&type=Images&responseType=json',
+
                 },
-                removePlugins: ["MediaEmbedToolbar","Markdown"]
+                removePlugins: ["MediaEmbedToolbar","Markdown"],
+                mediaEmbed: {
+                    previewsInData:true
+                }
             } )
             .catch( handleError );
 

@@ -22,6 +22,13 @@ use Illuminate\Support\Facades\Route;
 //});
 Route::group(['namespace' => 'Web'], function (){
     Route::get('/', 'HomeController@index')->name('home');
+    Route::get('/gioi-thieu', 'HomeController@getContent')->name('getContent');
+    Route::get('/thiet-ke-app', 'HomeController@getContentApp')->name('getContentApp');
+    Route::get('/tin-cong-nghe', 'ArticleController@index')->name('homeArticle');
+//    Route::get('/danh-muc-tin/{slug}', 'ArticleController@cat')->name('catArticle');
+    Route::get('/chi-tiet-tin/{slug}/{id}', 'ArticleController@detail')->name('detailArticle');
+    Route::get('/lien-he', 'ContactController@index')->name('detailContact');
+    Route::post('/lien-he/store', 'ContactController@store')->name('detailContactStore');
 });
 
 Route::any('/ckfinder/connector', '\CKSource\CKFinderBridge\Controller\CKFinderController@requestAction')
