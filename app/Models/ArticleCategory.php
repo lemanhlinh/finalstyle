@@ -7,7 +7,8 @@ use Kalnoy\Nestedset\NodeTrait;
 
 class ArticleCategory extends Model
 {
-    protected $guarded = ['id'];
+    protected $fillable = ['name', 'slug', 'parent_id', 'seo_title' , 'seo_keyword' ,'seo_description'];
+    protected $guarded = ['id', 'lft', 'rgt'];
     use NodeTrait;
 
     public function getLftName()

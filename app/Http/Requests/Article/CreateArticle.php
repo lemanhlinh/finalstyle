@@ -28,6 +28,8 @@ class CreateArticle extends FormRequest
             'category_id' => 'required',
             'content' => 'required',
             'date' => 'required',
+            'status' => 'required',
+            'description' => 'required',
             'image' => 'required|mimes:jpg,jpeg,png',
         ];
     }

@@ -102,7 +102,7 @@ return [
     'manage_role' => 'Quản lý quyền',
     'placeholder_select_roles' => 'Chọn vai trò',
     'roles' => [
-        '' => 'Vai trò',
+        '' => 'Vai trò/ phân quyền',
         'create' => 'Tạo mới vai trò',
         'update' => 'Cập nhật vai trò',
         'full_permission' => 'Tất cả quyền',
@@ -121,6 +121,10 @@ return [
         'date' => 'Ngày',
         'image' => 'Hình ảnh'
     ],
+    'seo_title' => 'SEO Title',
+    'seo_keyword' => 'SEO keyword',
+    'seo_description' => 'SEO description',
+    'description' => 'Mô tả',
     'open' => 'Mở',
     'close' => 'Đóng',
     'article_category' => [
@@ -130,5 +134,27 @@ return [
         'parent' => 'Cấp Cha',
         'create' => 'Tạo danh mục',
         'image' => 'Hình ảnh'
+    ],
+    'setting' => [
+        'name' => 'Tên',
+        'key' => 'Code',
+        'description' => 'Mô tả',
+        'active' => 'Trạng thái',
+        'manage' => 'Cấu hình',
+        'value' => 'Giá trị'
+    ],
+    'contact' => [
+        'name' => 'Tên',
+        'manage' => 'Liên hệ',
+        'email' => 'Code',
+        'content' => 'Mô tả',
+        'phone' => 'Số điện thoại'
+    ],
+    'menu_category' => [
+        'name' => 'Tên',
+        'manage' => 'Menu',
+        'email' => 'Code',
+        'content' => 'Mô tả',
+        'phone' => 'Số điện thoại'
     ]
 ];

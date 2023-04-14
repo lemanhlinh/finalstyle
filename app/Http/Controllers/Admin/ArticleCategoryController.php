@@ -63,7 +63,10 @@ class ArticleCategoryController extends Controller
                 'name' => $data['name'],
                 'slug' => $req->input('slug')?\Str::slug($req->input('slug'), '-'):\Str::slug($data['name'], '-'),
                 'parent_id' => $req->input('parent_id'),
-                'image' =>  $data['image']
+                'image' =>  $data['image'],
+                'seo_title' => $req->input('seo_title'),
+                'seo_keyword' => $req->input('seo_keyword'),
+                'seo_description' => $req->input('seo_description')
             ]);
             DB::commit();
             Session::flash('success', trans('message.create_article_category_success'));
@@ -125,6 +128,9 @@ class ArticleCategoryController extends Controller
             $category->name = $data['name'];
             $category->slug = $data['slug'];
             $category->parent_id = $req->input('parent_id');
+            $category->seo_title = $req->input('seo_title');
+            $category->seo_keyword = $req->input('seo_keyword');
+            $category->seo_description = $req->input('seo_description');
             if (\request()->hasFile('image')) {
                 $category->image = $this->articleCategoryRepository->saveFileUpload($data['image'],'images');
             }
@@ -169,8 +175,8 @@ class ArticleCategoryController extends Controller
     public function updateTree(Request $request)
     {
         $data = $request->data;
-        $root = $this->articleCategoryRepository->getAll()->find(1);
-        $this->articleCategoryRepository->updateTreeRebuild($root, $data);
+//        $root = $this->articleCategoryRepository->getAll()->find(1);
+        $this->articleCategoryRepository->updateTreeRebuild(null, $data);
         return response()->json($data);
     }
 }

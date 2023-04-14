@@ -19,7 +19,7 @@ class CreateSettingTable extends Migration
             $table->string('name');
             $table->string('description')->nullable();
             $table->text('value')->nullable();
-            $table->text('field');
+            $table->tinyInteger('type')->default(0)->comment('0: Text; 1: TextArea, 2: Image, 3: Editor');
             $table->tinyInteger('active')->default(0)->comment('0: Không hoạt động; 1: Hoạt động');
             $table->timestamps();
         });

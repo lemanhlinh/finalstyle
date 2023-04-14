@@ -9,4 +9,8 @@ interface ArticleCategoryInterface extends BaseInterface
      * @return mixed
      */
     public function store(array $data);
+
+    public function saveFileUpload($file, $type);
+
+    public function updateTreeRebuild($root, $data);
 }

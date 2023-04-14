@@ -14,7 +14,7 @@ class ArticleController extends Controller
 
     public function __construct(ArticleCategoryInterface $articleCategoryRepository, ArticleInterface $articleRepository)
     {
-        $this->middleware('auth');
+//        $this->middleware('auth');
         $this->articleCategoryRepository = $articleCategoryRepository;
         $this->articleRepository = $articleRepository;
     }

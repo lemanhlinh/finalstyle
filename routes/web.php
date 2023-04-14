@@ -28,7 +28,7 @@ Route::group(['namespace' => 'Web'], function (){
 //    Route::get('/danh-muc-tin/{slug}', 'ArticleController@cat')->name('catArticle');
     Route::get('/chi-tiet-tin/{slug}/{id}', 'ArticleController@detail')->name('detailArticle');
     Route::get('/lien-he', 'ContactController@index')->name('detailContact');
-    Route::post('/lien-he/store', 'ContactController@store')->name('detailContactStore');
+    Route::post('/lien-he', 'ContactController@store')->name('detailContactStore');
 });
 
 Route::any('/ckfinder/connector', '\CKSource\CKFinderBridge\Controller\CKFinderController@requestAction')
@@ -86,7 +86,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin'], fu
         Route::get('/edit/{id}', 'ArticleCategoryController@edit')->name('edit')->middleware('permission:edit_article');
         Route::post('/update/{id}', 'ArticleCategoryController@update')->name('update')->middleware('permission:edit_article');
         Route::post('/destroy/{id}', 'ArticleCategoryController@destroy')->name('destroy')->middleware('permission:delete_article');
-        Route::post('update-tree', 'ArticleCategoryController@updateTree')->name('updateTree')->middleware('permission:edit_article');
+        Route::post('/update-tree', 'ArticleCategoryController@updateTree')->name('updateTree')->middleware('permission:edit_article');
     });
 
     Route::group(['prefix' => 'setting', 'as' => 'setting.', 'middleware' => ['permission:view_article']], function () {
@@ -96,6 +96,20 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin'], fu
         Route::get('/edit/{id}', 'SettingController@edit')->name('edit')->middleware('permission:edit_article');
         Route::post('/update/{id}', 'SettingController@update')->name('update')->middleware('permission:edit_article');
         Route::post('/destroy/{id}', 'SettingController@destroy')->name('destroy')->middleware('permission:delete_article');
+    });
+
+    Route::group(['prefix' => 'contact', 'as' => 'contact.', 'middleware' => ['permission:view_article']], function () {
+        Route::get('', 'ContactController@index')->name('index');
+    });
+
+    Route::group(['prefix' => 'menu-category', 'as' => 'menu-category.', 'middleware' => ['permission:view_article']], function () {
+        Route::get('', 'MenuCategoryController@index')->name('index');
+        Route::get('/create', 'MenuCategoryController@create')->name('create')->middleware('permission:create_article');
+        Route::post('/store', 'MenuCategoryController@store')->name('store')->middleware('permission:create_article');
+        Route::get('/edit/{id}', 'MenuCategoryController@edit')->name('edit')->middleware('permission:edit_article');
+        Route::post('/update/{id}', 'MenuCategoryController@update')->name('update')->middleware('permission:edit_article');
+        Route::post('/destroy/{id}', 'MenuCategoryController@destroy')->name('destroy')->middleware('permission:delete_article');
+        Route::post('/update-tree', 'MenuCategoryController@updateTree')->name('updateTree')->middleware('permission:edit_article');
     });
 
 });

@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\Setting;
+use Carbon\Carbon;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Editor\Editor;
@@ -21,13 +22,31 @@ class SettingDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
-            ->addColumn('action', 'setting.action');
+            ->editColumn('created_at', function ($q) {
+                return Carbon::parse($q->created_at)->format('H:i:s Y/m/d');
+            })
+            ->addColumn('display', function ($q) {
+                if ($q->type == 2) {
+                    return '<img src="' . asset($q->value) . '" width="200px" >';
+                } elseif ($q->type == 3) {
+                    return '<span class="text-red">Nội dung editor</span>';
+                } else {
+                    return $q->value;
+                }
+            })
+            ->addColumn('action', function ($q){
+                $urlEdit = route('admin.setting.edit', $q->id);
+                $urlDelete = route('admin.setting.destroy', $q->id);
+                $lowerModelName = strtolower(class_basename(new Setting()));
+                return view('admin.components.buttons.edit', compact('urlEdit'))->render() . view('admin.components.buttons.delete', compact('urlDelete', 'lowerModelName'))->render();
+            })
+            ->rawColumns(['display', 'action']);
     }
 
     /**
      * Get query source of dataTable.
      *
-     * @param \App\Models\SettingDataTable $model
+     * @param \App\Models\Setting $model
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function query(Setting $model)
@@ -47,7 +66,7 @@ class SettingDataTable extends DataTable
                     ->columns($this->getColumns())
                     ->minifiedAjax()
                     ->dom('Bfrtip')
-                    ->orderBy(1)
+                    ->orderBy(0, 'asc')
                     ->buttons(
                         Button::make('create'),
                         Button::make('export'),
@@ -67,10 +86,11 @@ class SettingDataTable extends DataTable
         return [
             Column::make('id'),
             Column::make('name'),
-            Column::make('value'),
+            Column::make('key'),
+//            Column::make('value'),
             Column::make('description'),
+            Column::make('display'),
             Column::make('created_at'),
-            Column::make('updated_at'),
             Column::computed('action')
                   ->exportable(false)
                   ->printable(false)

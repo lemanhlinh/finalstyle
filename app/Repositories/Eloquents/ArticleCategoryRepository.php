@@ -29,7 +29,10 @@ class ArticleCategoryRepository extends BaseRepository implements ArticleCategor
             'name' =>  $data['name'],
             'slug' =>  $data['slug'],
             'parent_id' =>  $data['parent_id'] ?? 0,
-            'image' =>  $data['image'] ?? null
+            'image' =>  $data['image'] ?? null,
+            'seo_title' =>  $data['seo_title'] ?? null,
+            'seo_keyword' =>  $data['seo_keyword'] ?? null,
+            'seo_description' =>  $data['seo_description'] ?? null,
         ]);
     }
 
@@ -52,8 +55,9 @@ class ArticleCategoryRepository extends BaseRepository implements ArticleCategor
      * @param $type
      * @return string
      */
-    public function updateTreeRebuild($root, $data)
+    public function updateTreeRebuild($root = null, $data)
     {
-        return $this->model->rebuildSubtree($root, $data);
+//        dd($data);
+        return $this->model->rebuildSubtree(null, $data);
     }
 }

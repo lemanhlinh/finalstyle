@@ -72,9 +72,14 @@ class ArticleController extends Controller
                 'title' => $data['title'],
                 'slug' => $req->input('slug')?\Str::slug($req->input('slug'), '-'):\Str::slug($data['title'], '-'),
                 'category_id' => $req->input('category_id'),
+                'description' => $data['description'],
                 'content' => $req->input('content'),
-                'date' => $req->input('date'),
-                'image' =>  $data['image']
+                'date' => $data['date'],
+                'status' => $data['status'],
+                'image' =>  $data['image'],
+                'seo_title' => $req->input('seo_title'),
+                'seo_keyword' => $req->input('seo_keyword'),
+                'seo_description' => $req->input('seo_description')
             ]);
             DB::commit();
             Session::flash('success', trans('message.create_article_success'));
@@ -131,13 +136,19 @@ class ArticleController extends Controller
     {
         try {
             $data = $req->validated();
+
             $article = $this->articleRepository->getOneById($id);
 
             $article->title = $data['title'];
             $article->slug = $data['slug'];
+            $article->description = $data['description'];
             $article->category_id = $req->input('category_id');
             $article->content = $req->input('content');
-            $article->date = $req->input('date');
+            $article->date = $data['date'];
+            $article->status = $data['status'];
+            $article->seo_title = $req->input('seo_title');
+            $article->seo_keyword = $req->input('seo_keyword');
+            $article->seo_description = $req->input('seo_description');
             if (\request()->hasFile('image')) {
                 $article->image = $this->articleCategoryRepository->saveFileUpload($data['image'],'images');
             }

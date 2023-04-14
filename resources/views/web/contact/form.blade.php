@@ -1,19 +1,19 @@
 <div class="row mb-3">
     <div class="col-md-6">
-        <input type="text" class="form-control" placeholder="Họ và tên">
+        <input type="text" class="form-control" name="name" placeholder="Họ và tên" required>
     </div>
     <div class="col-md-6">
-        <input type="text" class="form-control" placeholder="Số điện thoại">
+        <input type="tel" class="form-control" name="phone" placeholder="Số điện thoại"  pattern="^0\d{9}$" required>
     </div>
 </div>
 <div class="row mb-3">
     <div class="col-md-6">
-        <input type="text" class="form-control" placeholder="Email">
+        <input type="email" class="form-control" name="email" placeholder="Email" required>
     </div>
     <div class="col-md-6">
-        <input type="text" class="form-control" placeholder="Địa chỉ">
+        <input type="text" class="form-control" name="address" placeholder="Địa chỉ" required>
     </div>
 </div>
 <div class="content-form mb-3">
-    <textarea name="" id="" cols="30" rows="3" placeholder="Nội dung" class="form-control"></textarea>
+    <textarea id="content" cols="30" rows="3" name="content" placeholder="Nội dung" class="form-control" required></textarea>
 </div>

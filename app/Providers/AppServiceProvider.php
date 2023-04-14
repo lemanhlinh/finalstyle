@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Repositories\Contracts\SettingInterface;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Request;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,8 +24,17 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(SettingInterface $settingRepository)
     {
-        //
+
+        if (!Request::is('admin/*')) {
+            $setting = $settingRepository->getAll()->pluck('value', 'key');
+            View::share('setting', $setting);
+//            View::composer(['web.partials._header', 'web.partials._footer'], function ($view) {
+//                $config = Setting::all();
+//                $view->with('menus', $config);
+//            });
+        }
+
     }
 }

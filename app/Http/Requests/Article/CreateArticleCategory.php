@@ -25,7 +25,7 @@ class CreateArticleCategory extends FormRequest
     {
         return [
             'name' => 'required',
-            'image' => 'required|mimes:jpg,jpeg,png',
+            'image' => 'required_if:type,file|image|mimes:jpg,jpeg,png',
         ];
     }
 }

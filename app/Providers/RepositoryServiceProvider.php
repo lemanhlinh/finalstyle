@@ -28,5 +28,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind('App\Repositories\Contracts\PermissionInterface', 'App\Repositories\Eloquents\PermissionRepository');
         $this->app->bind('App\Repositories\Contracts\ArticleInterface', 'App\Repositories\Eloquents\ArticleRepository');
         $this->app->bind('App\Repositories\Contracts\ArticleCategoryInterface', 'App\Repositories\Eloquents\ArticleCategoryRepository');
+        $this->app->bind('App\Repositories\Contracts\SettingInterface', 'App\Repositories\Eloquents\SettingRepository');
+        $this->app->bind('App\Repositories\Contracts\MenuCategoryInterface', 'App\Repositories\Eloquents\MenuCategoryRepository');
     }
 }

@@ -23,8 +23,8 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
-                <li class="nav-item @if (request()->is('admin/users*')) menu-open @endif">
-                    <a href="#" class="nav-link @if (request()->is('admin/users*')) active @endif">
+                <li class="nav-item @if (request()->is('admin/users*') || request()->is('admin/role*')) menu-open @endif">
+                    <a href="#" class="nav-link @if (request()->is('admin/users*') || request()->is('admin/role*')) active @endif">
                         <i class="fas fa-user"></i>
                         <p>
                             @lang('form.user.title')
@@ -40,6 +40,16 @@
                                 </p>
                             </a>
                         </li>
+                        @can('view_role')
+                            <li class="nav-item">
+                                <a href="{{ route('admin.roles.index') }}" class="nav-link @if (request()->is('admin/role*')) active @endif">
+                                    <i class="nav-icon far fa-plus-square" aria-hidden="true"></i>
+                                    <p>
+                                        @lang('form.roles.')
+                                    </p>
+                                </a>
+                            </li>
+                        @endcan
                     </ul>
                 </li>
                 @can('view_article')
@@ -71,12 +81,12 @@
                         </ul>
                     </li>
                 @endcan
-                @can('view_role')
+                @can('view_article')
                     <li class="nav-item">
-                        <a href="{{ route('admin.roles.index') }}" class="nav-link @if (request()->is('admin/role*')) active @endif">
-                            <i class="nav-icon far fa-plus-square" aria-hidden="true"></i>
+                        <a href="{{ route('admin.menu-category.index') }}" class="nav-link @if (request()->is('admin/menu-category')) active @endif">
+                            <i class="nav-icon fas fa-child"></i>
                             <p>
-                                @lang('form.roles.')
+                                @lang('form.menu_category.manage')
                             </p>
                         </a>
                     </li>
@@ -91,6 +101,14 @@
                         </a>
                     </li>
                 @endcan
+                <li class="nav-item">
+                    <a href="{{ route('admin.contact.index') }}" class="nav-link @if (request()->is('admin/contact')) active @endif">
+                        <i class="nav-icon fas fa-school"></i>
+                        <p>
+                            @lang('form.contact.manage')
+                        </p>
+                    </a>
+                </li>
                 @can('view_roll_call')
                     <li class="nav-item">
                         <a href="{{ route('admin.roll-calls.index') }}" class="nav-link @if (request()->is('admin/roll-call*')) active @endif">

@@ -29,6 +29,8 @@ class UpdateArticle extends FormRequest
             'slug' => 'required',
             'content' => 'required',
             'date' => 'required',
+            'status' => 'required',
+            'description' => 'required',
             'image' => 'required_if:type,file|image|mimes:jpg,jpeg,png',
         ];
     }
