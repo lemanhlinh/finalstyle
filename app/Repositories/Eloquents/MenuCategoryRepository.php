@@ -3,9 +3,9 @@
 namespace App\Repositories\Eloquents;
 
 use App\Models\MenuCategory;
-use App\Repositories\Contracts\ArticleCategoryInterface;
+use App\Repositories\Contracts\MenuCategoryInterface;
 
-class MenuCategoryRepository extends BaseRepository implements ArticleCategoryInterface
+class MenuCategoryRepository extends BaseRepository implements MenuCategoryInterface
 {
     /**
      * @return string
@@ -47,13 +47,4 @@ class MenuCategoryRepository extends BaseRepository implements ArticleCategoryIn
         return '/storage/article/category/' . $type . '/' . $fileName;
     }
 
-    /**
-     * @param $file
-     * @param $type
-     * @return string
-     */
-    public function updateTreeRebuild($root, $data)
-    {
-        return $this->model->rebuildSubtree($root, $data);
-    }
 }

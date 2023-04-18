@@ -4,17 +4,30 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\DataTables\MenuCategoryDataTable;
+use App\Repositories\Contracts\MenuCategoryInterface;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
+use App\Http\Requests\Menu\CreateMenuCategory;
+use App\Http\Requests\Menu\UpdateMenuCategory;
 
 class MenuCategoryController extends Controller
 {
+    protected $menuCategoryRepository;
+
+    public function __construct(MenuCategoryInterface $menuCategoryRepository)
+    {
+        $this->middleware('auth');
+        $this->menuCategoryRepository = $menuCategoryRepository;
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(MenuCategoryDataTable $dataTable)
     {
-        return view('admin.menu-category.index');
+        return $dataTable->render('admin.menu-category.index');
     }
 
     /**
@@ -24,7 +37,7 @@ class MenuCategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.menu-category.create');
     }
 
     /**
@@ -33,9 +46,28 @@ class MenuCategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateMenuCategory $req)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $data = $req->validated();
+            $this->menuCategoryRepository->create([
+                'name' => $data['name']
+            ]);
+            DB::commit();
+            Session::flash('success', trans('message.create_menu_category_success'));
+            return redirect()->back();
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            \Log::info([
+                'message' => $ex->getMessage(),
+                'line' => __LINE__,
+                'method' => __METHOD__
+            ]);
+
+            Session::flash('danger', trans('message.create_menu_category_error'));
+            return redirect()->back();
+        }
     }
 
     /**
@@ -57,7 +89,8 @@ class MenuCategoryController extends Controller
      */
     public function edit($id)
     {
-        //
+        $menu_category = $this->menuCategoryRepository->getOneById($id);
+        return view('admin.menu-category.update', compact('menu_category'));
     }
 
     /**
@@ -67,9 +100,25 @@ class MenuCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update($id, UpdateMenuCategory $req)
     {
-        //
+        try {
+            $data = $req->validated();
+            $category = $this->menuCategoryRepository->getOneById($id);
+
+            $category->name = $data['name'];
+            $category->save();
+            Session::flash('success', trans('message.update_menu_category_success'));
+            return redirect()->route('admin.menu-category.edit', $id);
+        } catch (\Exception $exception) {
+            \Log::info([
+                'message' => $exception->getMessage(),
+                'line' => __LINE__,
+                'method' => __METHOD__
+            ]);
+            Session::flash('danger', trans('message.update_menu_category_error'));
+            return back();
+        }
     }
 
     /**
@@ -80,6 +129,11 @@ class MenuCategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $this->menuCategoryRepository->delete($id);
+
+        return [
+            'status' => true,
+            'message' => trans('message.delete_menu_category_success')
+        ];
     }
 }

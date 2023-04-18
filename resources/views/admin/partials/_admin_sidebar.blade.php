@@ -82,13 +82,32 @@
                     </li>
                 @endcan
                 @can('view_article')
-                    <li class="nav-item">
-                        <a href="{{ route('admin.menu-category.index') }}" class="nav-link @if (request()->is('admin/menu-category')) active @endif">
-                            <i class="nav-icon fas fa-child"></i>
+                    <li class="nav-item @if (request()->is('admin/menu*')) menu-open @endif">
+                        <a href="#" class="nav-link @if (request()->is('admin/menu*')) active @endif">
+                            <i class="fas fa-newspaper"></i>
                             <p>
-                                @lang('form.menu_category.manage')
+                                @lang('form.menu.')
+                                <i class="fas fa-angle-left right"></i>
                             </p>
                         </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.menu-category.index') }}" class="nav-link @if (request()->is('admin/menu-category')) active @endif">
+                                    <i class="nav-icon fas fa-child"></i>
+                                    <p>
+                                        @lang('form.menu_category.manage')
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.menu.index') }}" class="nav-link @if (request()->is('admin/menu')) active @endif">
+                                    <i class="nav-icon fas fa-child"></i>
+                                    <p>
+                                        @lang('form.menu.')
+                                    </p>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 @endcan
                 @can(['view_article'])

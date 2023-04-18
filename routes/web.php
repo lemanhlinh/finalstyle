@@ -25,7 +25,7 @@ Route::group(['namespace' => 'Web'], function (){
     Route::get('/gioi-thieu', 'HomeController@getContent')->name('getContent');
     Route::get('/thiet-ke-app', 'HomeController@getContentApp')->name('getContentApp');
     Route::get('/tin-cong-nghe', 'ArticleController@index')->name('homeArticle');
-//    Route::get('/danh-muc-tin/{slug}', 'ArticleController@cat')->name('catArticle');
+    Route::get('/danh-muc-tin/{slug}', 'ArticleController@cat')->name('catArticle');
     Route::get('/chi-tiet-tin/{slug}/{id}', 'ArticleController@detail')->name('detailArticle');
     Route::get('/lien-he', 'ContactController@index')->name('detailContact');
     Route::post('/lien-he', 'ContactController@store')->name('detailContactStore');
@@ -110,6 +110,17 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin'], fu
         Route::post('/update/{id}', 'MenuCategoryController@update')->name('update')->middleware('permission:edit_article');
         Route::post('/destroy/{id}', 'MenuCategoryController@destroy')->name('destroy')->middleware('permission:delete_article');
         Route::post('/update-tree', 'MenuCategoryController@updateTree')->name('updateTree')->middleware('permission:edit_article');
+    });
+
+
+    Route::group(['prefix' => 'menu', 'as' => 'menu.', 'middleware' => ['permission:view_article']], function () {
+        Route::get('', 'MenuController@index')->name('index');
+        Route::get('/create', 'MenuController@create')->name('create')->middleware('permission:create_article');
+        Route::post('/store', 'MenuController@store')->name('store')->middleware('permission:create_article');
+        Route::get('/edit/{id}', 'MenuController@edit')->name('edit')->middleware('permission:edit_article');
+        Route::post('/update/{id}', 'MenuController@update')->name('update')->middleware('permission:edit_article');
+        Route::post('/destroy/{id}', 'MenuController@destroy')->name('destroy')->middleware('permission:delete_article');
+        Route::post('/update-tree', 'MenuController@updateTree')->name('updateTree')->middleware('permission:edit_article');
     });
 
 });

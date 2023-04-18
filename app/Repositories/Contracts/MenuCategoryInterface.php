@@ -12,5 +12,4 @@ interface MenuCategoryInterface extends BaseInterface
 
     public function saveFileUpload($file, $type);
 
-    public function updateTreeRebuild($root, $data);
 }

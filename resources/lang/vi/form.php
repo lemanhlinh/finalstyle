@@ -152,9 +152,6 @@ return [
     ],
     'menu_category' => [
         'name' => 'Tên',
-        'manage' => 'Menu',
-        'email' => 'Code',
-        'content' => 'Mô tả',
-        'phone' => 'Số điện thoại'
+        'manage' => 'Group Menu'
     ]
 ];
