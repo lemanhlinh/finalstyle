@@ -75,7 +75,7 @@ class ArticleController extends Controller
                 'description' => $data['description'],
                 'content' => $req->input('content'),
                 'date' => $data['date'],
-                'status' => $data['status'],
+                'status' => intval($data['status']),
                 'image' =>  $data['image'],
                 'seo_title' => $req->input('seo_title'),
                 'seo_keyword' => $req->input('seo_keyword'),
@@ -91,7 +91,6 @@ class ArticleController extends Controller
                 'line' => __LINE__,
                 'method' => __METHOD__
             ]);
-
             Session::flash('danger', trans('message.create_article_error'));
             return redirect()->back();
         }
@@ -145,7 +144,7 @@ class ArticleController extends Controller
             $article->category_id = $req->input('category_id');
             $article->content = $req->input('content');
             $article->date = $data['date'];
-            $article->status = $data['status'];
+            $article->status = intval($data['status']);
             $article->seo_title = $req->input('seo_title');
             $article->seo_keyword = $req->input('seo_keyword');
             $article->seo_description = $req->input('seo_description');

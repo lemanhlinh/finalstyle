@@ -25,14 +25,7 @@ class ArticleRepository extends BaseRepository implements ArticleInterface
             $data['image'] = $this->saveFileUpload($data['image'], 'images');
         }
 
-        return $this->create([
-            'title' =>  $data['title'],
-            'slug' =>  $data['slug'],
-            'content' =>  $data['content'],
-            'date' =>  $data['date'],
-            'category_id' =>  $data['category_id'] ?? 0,
-            'image' =>  $data['image'] ?? null
-        ]);
+        return $this->create($data);
     }
 
     /**

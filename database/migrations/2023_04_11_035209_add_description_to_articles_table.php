@@ -14,7 +14,7 @@ class AddDescriptionToArticlesTable extends Migration
     public function up()
     {
         Schema::table('articles', function (Blueprint $table) {
-            $table->string('description')->after('slug');
+            $table->text('description')->after('slug');
         });
     }
 

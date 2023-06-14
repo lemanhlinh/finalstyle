@@ -6,6 +6,7 @@
         Xóa
     </div>
     <input type="text" class="form-control update-name" id="update-name-{{ $item->id }}" value="{{ $item->name }}">
+    <input type="text" class="form-control update-link" id="update-link-{{ $item->id }}" value="{{ $item->link }}">
     @if (count($item->children) > 0)
         <ol class="dd-list">
             @foreach ($item->children as $val)

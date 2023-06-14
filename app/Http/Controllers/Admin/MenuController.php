@@ -126,7 +126,12 @@ class MenuController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $this->menuRepository->delete($id);
+
+        return [
+            'status' => true,
+            'message' => trans('message.delete_menu_success')
+        ];
     }
 
     /**

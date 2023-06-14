@@ -31,6 +31,9 @@ class CreateArticle extends FormRequest
             'status' => 'required',
             'description' => 'required',
             'image' => 'required|mimes:jpg,jpeg,png',
+            'seo_title' => 'required',
+            'seo_keyword' => 'required',
+            'seo_description' => 'required',
         ];
     }
 }

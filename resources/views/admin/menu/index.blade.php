@@ -29,6 +29,18 @@
                     @endforeach
                 @endif
                 <li>
+                    <input type="checkbox" id="home_article" value="0" data-link="{{ route('homeArticle') }}" data-name="Trang chủ tin tức"><label for="home_article">Trang chủ tin tức</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="content_about" value="0" data-link="{{ route('getContent') }}" data-name="Giới thiệu"><label for="content_about">Giới thiệu</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="content_about_app" value="0" data-link="{{ route('getContentApp') }}" data-name="Thiết kế app"><label for="content_about_app">Thiết kế app</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="home_contact" value="0" data-link="{{ route('detailContact') }}" data-name="Liên hệ"><label for="home_contact">Liên hệ</label>
+                </li>
+                <li>
                     <input type="checkbox" id="menu_other" value="0" data-link="#" data-name="Link bên ngoài"><label for="menu_other">Link bên ngoài</label>
                 </li>
             </ul>
@@ -81,7 +93,8 @@
             $('.dd-item').each(function() {
                 let id = $(this).data('id');
                 let name = $(this).find('input[id="update-name-'+id+'"]').val();
-                updateNameInNestedArray(dataOutput, id, name);
+                let link = $(this).find('input[id="update-link-'+id+'"]').val();
+                updateNameInNestedArray(dataOutput, id, name, link);
             });
             try {
                 $.ajax({
@@ -107,12 +120,15 @@
                     type: "post",
                     url: $(this).attr("data-url"),
                     data: {
-                        name: item.getAttribute("data-name"),
-                        link: item.getAttribute("data-link"),
                         category_id: $('#category_id').val(),
                         _token : $('meta[name="csrf-token"]').attr("content")
                     },
                     success: function (response) {
+                        Swal.fire(
+                            'Đã xóa!',
+                            'Đã xóa menu này!',
+                            'success'
+                        )
                         return response.id;
                     }
                 });
@@ -122,14 +138,15 @@
             }
         });
 
-        function updateNameInNestedArray(arr, id, newName) {
+        function updateNameInNestedArray(arr, id, newName, link) {
             for (let i = 0; i < arr.length; i++) {
                 if (arr[i].id === id) {
                     arr[i].name = newName;
+                    arr[i].link = link;
                     return true; // trả về true nếu cập nhật thành công
                 }
                 if (arr[i].children) {
-                    if (updateNameInNestedArray(arr[i].children, id, newName)) {
+                    if (updateNameInNestedArray(arr[i].children, id, newName, link)) {
                         return true; // trả về true nếu cập nhật thành công
                     }
                 }
@@ -183,13 +200,20 @@
                 handleInput.setAttribute('value', item.getAttribute("data-name"));
                 handleInput.id = 'update-name-'+data_id;
 
+                let handleInputLink = document.createElement('input');
+                handleInputLink.classList.add('form-control');
+                handleInputLink.setAttribute('value', item.getAttribute("data-link"));
+                handleInputLink.id = 'update-link-'+data_id;
+
                 // Thêm tay cầm vào phần tử mới
                 newItem.appendChild(handle);
                 newItem.appendChild(remove);
                 newItem.appendChild(handleInput);
+                newItem.appendChild(handleInputLink);
 
                 // Thêm phần tử mới vào danh sách đa cấp
                 nestable.querySelector('.dd-list').appendChild(newItem);
+                location.reload();
             } catch (error) {
                 console.log(error);
             }

@@ -32,6 +32,9 @@ class UpdateArticle extends FormRequest
             'status' => 'required',
             'description' => 'required',
             'image' => 'required_if:type,file|image|mimes:jpg,jpeg,png',
+            'seo_title' => 'required',
+            'seo_keyword' => 'required',
+            'seo_description' => 'required',
         ];
     }
 }
